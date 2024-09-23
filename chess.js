@@ -21,11 +21,21 @@ let board = [
 const pieceImages = {};
 const pieceTypes = ['P','R','N','B','Q','K'];
 const colors = ['w','b'];
+let imagesToLoad = 12;
+let imagesLoaded = 0;
+
+function imageLoaded() {
+    imagesLoaded++;
+    if (imagesLoaded === imagesToLoad) {
+        drawBoard();
+    }
+}
 
 colors.forEach(color => {
     pieceTypes.forEach(type => {
         const img = new Image();
         img.src = `images/${color}${type}.png`;
+        img.onload = imageLoaded;
         pieceImages[`${color}${type}`] = img;
     });
 });
@@ -46,9 +56,6 @@ function drawBoard() {
             const piece = board[row][col];
             if(piece) {
                 const img = pieceImages[piece];
-                img.onload = () => {
-                    ctx.drawImage(img, col * tileSize, row * tileSize, tileSize, tileSize);
-                }
                 ctx.drawImage(img, col * tileSize, row * tileSize, tileSize, tileSize);
             }
         }
@@ -79,6 +86,7 @@ canvas.addEventListener('click', event => {
         // Select piece logic
         if (clickedPiece && clickedPiece[0] === turn) {
             selectedPiece = { row, col, piece: clickedPiece };
+            drawBoard();
             // Highlight selected tile
             ctx.strokeStyle = 'red';
             ctx.lineWidth = 4;
@@ -101,9 +109,4 @@ function isValidMove(fromRow, fromCol, toRow, toCol) {
 
 // Move the piece
 function movePiece(fromRow, fromCol, toRow, toCol) {
-    board[toRow][toCol] = board[fromRow][fromCol];
-    board[fromRow][fromCol] = '';
-}
-
-// Initial draw
-drawBoard();
+    board[toRow][toCol] = board[fromRow][fr
