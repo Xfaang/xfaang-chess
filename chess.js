@@ -3,7 +3,7 @@ const ctx = canvas.getContext('2d');
 const tileSize = 60;
 let selectedPiece = null;
 let turn = 'w';
-const statusDiv = document.getElementElementById('status');
+const statusDiv = document.getElementById('status');
 
 // Initialize board matrix
 let board = [
