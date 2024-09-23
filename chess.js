@@ -109,4 +109,10 @@ function isValidMove(fromRow, fromCol, toRow, toCol) {
 
 // Move the piece
 function movePiece(fromRow, fromCol, toRow, toCol) {
-    board[toRow][toCol] = board[fromRow][fr
+    board[toRow][toCol] = board[fromRow][fromCol];
+    board[fromRow][fromCol] = '';
+}
+
+drawBoard()
+
+// Note: drawBoard() is now called after all images have loaded.
