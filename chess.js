@@ -91,6 +91,8 @@ canvas.addEventListener('click', event => {
             movePiece(selectedPiece.row, selectedPiece.col, row, col);
             turn = turn === 'w' ? 'b' : 'w';
             statusDiv.textContent = `${turn === 'w' ? "White's" : "Black's"} turn`;
+        } else {
+            alert('Invalid move!');
         }
         selectedPiece = null;
         drawBoard();
@@ -120,26 +122,28 @@ function isValidMove(fromRow, fromCol, toRow, toCol) {
     const deltaRow = toRow - fromRow;
     const deltaCol = toCol - fromCol;
 
+    // First, check basic movement rules
+    let valid = false;
     switch (pieceType) {
         case 'P':
             // Pawns
             if (deltaCol === 0) {
                 // Moving forward
                 if ((deltaRow === dir) && !targetPiece) {
-                    return true;
+                    valid = true;
                 }
                 // Double move from starting position
-                if ((fromRow === (turn === 'w' ? 6 : 1)) && (deltaRow === 2 * dir) && !targetPiece && !board[fromRow + dir][fromCol]) {
-                    return true;
+                else if ((fromRow === (turn === 'w' ? 6 : 1)) && (deltaRow === 2 * dir) && !targetPiece && !board[fromRow + dir][fromCol]) {
+                    valid = true;
                 }
             } else if (Math.abs(deltaCol) === 1 && deltaRow === dir) {
                 // Capturing diagonally
                 if (targetPiece && targetPiece[0] !== turn) {
-                    return true;
+                    valid = true;
                 }
                 // En Passant
-                if (enPassantTarget && enPassantTarget.row === toRow && enPassantTarget.col === toCol) {
-                    return true;
+                else if (enPassantTarget && enPassantTarget.row === toRow && enPassantTarget.col === toCol) {
+                    valid = true;
                 }
             }
             break;
@@ -147,21 +151,21 @@ function isValidMove(fromRow, fromCol, toRow, toCol) {
             // Rooks
             if (deltaRow === 0 || deltaCol === 0) {
                 if (isPathClear(fromRow, fromCol, toRow, toCol)) {
-                    return true;
+                    valid = true;
                 }
             }
             break;
         case 'N':
             // Knights
             if ((Math.abs(deltaRow) === 2 && Math.abs(deltaCol) === 1) || (Math.abs(deltaRow) === 1 && Math.abs(deltaCol) === 2)) {
-                return true;
+                valid = true;
             }
             break;
         case 'B':
             // Bishops
             if (Math.abs(deltaRow) === Math.abs(deltaCol)) {
                 if (isPathClear(fromRow, fromCol, toRow, toCol)) {
-                    return true;
+                    valid = true;
                 }
             }
             break;
@@ -169,25 +173,42 @@ function isValidMove(fromRow, fromCol, toRow, toCol) {
             // Queens
             if ((deltaRow === 0 || deltaCol === 0) || (Math.abs(deltaRow) === Math.abs(deltaCol))) {
                 if (isPathClear(fromRow, fromCol, toRow, toCol)) {
-                    return true;
+                    valid = true;
                 }
             }
             break;
         case 'K':
             // Kings
             if (Math.abs(deltaRow) <= 1 && Math.abs(deltaCol) <= 1) {
-                return true;
+                valid = true;
             }
             // Castling
-            if (deltaRow === 0 && Math.abs(deltaCol) === 2) {
+            else if (deltaRow === 0 && Math.abs(deltaCol) === 2) {
                 if (canCastle[`${turn}K`] && isCastlingMove(fromRow, fromCol, toRow, toCol)) {
-                    return true;
+                    valid = true;
                 }
             }
             break;
     }
 
-    return false;
+    if (!valid) return false;
+
+    // Simulate the move
+    const capturedPiece = board[toRow][toCol];
+    board[toRow][toCol] = movingPiece;
+    board[fromRow][fromCol] = '';
+
+    // Check if own king is in check
+    const kingInCheck = isKingInCheck(turn);
+
+    // Revert the move
+    board[fromRow][fromCol] = movingPiece;
+    board[toRow][toCol] = capturedPiece;
+
+    // If king is in check after the move, it's invalid
+    if (kingInCheck) return false;
+
+    return true;
 }
 
 // Helper function to check if the path between from and to is clear (same as before)
@@ -212,7 +233,7 @@ function isPathClear(fromRow, fromCol, toRow, toCol) {
     return true;
 }
 
-// Helper function to check for castling
+// Helper function to check for castling (same as before)
 function isCastlingMove(fromRow, fromCol, toRow, toCol) {
     const kingSide = toCol === 6;
     const queenSide = toCol === 2;
@@ -225,8 +246,10 @@ function isCastlingMove(fromRow, fromCol, toRow, toCol) {
         if (rook === `${turn}R` && canCastle[`${turn}R7`]) {
             // Check if squares between king and rook are empty
             if (board[fromRow][5] === '' && board[fromRow][6] === '') {
-                // Ensure squares are not under attack (not implemented here)
-                return true;
+                // Ensure squares are not under attack
+                if (!areSquaresUnderAttack(fromRow, [5,6], turn)) {
+                    return true;
+                }
             }
         }
     } else if (queenSide) {
@@ -234,8 +257,9 @@ function isCastlingMove(fromRow, fromCol, toRow, toCol) {
         const rook = board[fromRow][0];
         if (rook === `${turn}R` && canCastle[`${turn}R0`]) {
             if (board[fromRow][1] === '' && board[fromRow][2] === '' && board[fromRow][3] === '') {
-                // Ensure squares are not under attack (not implemented here)
-                return true;
+                if (!areSquaresUnderAttack(fromRow, [2,3], turn)) {
+                    return true;
+                }
             }
         }
     }
@@ -243,7 +267,24 @@ function isCastlingMove(fromRow, fromCol, toRow, toCol) {
     return false;
 }
 
-// Move the piece (updated)
+// Check if squares are under attack
+function areSquaresUnderAttack(row, cols, color) {
+    for (let col of cols) {
+        // Simulate king on the square
+        const originalPiece = board[row][col];
+        board[row][col] = `${color}K`;
+
+        const inCheck = isKingInCheck(color);
+
+        // Revert the piece
+        board[row][col] = originalPiece;
+
+        if (inCheck) return true;
+    }
+    return false;
+}
+
+// Move the piece (same as before, with minor adjustments)
 function movePiece(fromRow, fromCol, toRow, toCol) {
     const movingPiece = board[fromRow][fromCol];
     const pieceType = movingPiece[1];
@@ -313,10 +354,92 @@ function movePiece(fromRow, fromCol, toRow, toCol) {
     });
 }
 
-// Function to check if king is in check (simplified)
+// Function to check if king is in check (updated)
 function isKingInCheck(color) {
-    // Simplified version; in a full implementation, you'd need to check if any of the opponent's pieces can attack the king
+    // Find the king's position
+    let kingPosition = null;
+    for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+            if (board[row][col] === `${color}K`) {
+                kingPosition = { row, col };
+                break;
+            }
+        }
+        if (kingPosition) break;
+    }
+
+    if (!kingPosition) return true; // King is captured (should not happen in a valid game)
+
+    // Check all opponent's pieces to see if any can attack the king
+    const opponentColor = color === 'w' ? 'b' : 'w';
+    for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+            const piece = board[row][col];
+            if (piece && piece[0] === opponentColor) {
+                if (canPieceAttackSquare(row, col, kingPosition.row, kingPosition.col)) {
+                    return true;
+                }
+            }
+        }
+    }
+
     return false;
 }
 
-// Initial draw is handled after images are loaded
+// Function to check if a piece can attack a square
+function canPieceAttackSquare(fromRow, fromCol, toRow, toCol) {
+    const movingPiece = board[fromRow][fromCol];
+    const pieceType = movingPiece[1];
+    const color = movingPiece[0];
+    const dir = color === 'w' ? -1 : 1;
+
+    const deltaRow = toRow - fromRow;
+    const deltaCol = toCol - fromCol;
+
+    switch (pieceType) {
+        case 'P':
+            // Pawns capture diagonally forward
+            if (deltaRow === dir && Math.abs(deltaCol) === 1) {
+                return true;
+            }
+            break;
+        case 'R':
+            // Rooks
+            if (deltaRow === 0 || deltaCol === 0) {
+                if (isPathClear(fromRow, fromCol, toRow, toCol)) {
+                    return true;
+                }
+            }
+            break;
+        case 'N':
+            // Knights
+            if ((Math.abs(deltaRow) === 2 && Math.abs(deltaCol) === 1) || (Math.abs(deltaRow) === 1 && Math.abs(deltaCol) === 2)) {
+                return true;
+            }
+            break;
+        case 'B':
+            // Bishops
+            if (Math.abs(deltaRow) === Math.abs(deltaCol)) {
+                if (isPathClear(fromRow, fromCol, toRow, toCol)) {
+                    return true;
+                }
+            }
+            break;
+        case 'Q':
+            // Queens
+            if ((deltaRow === 0 || deltaCol === 0) || (Math.abs(deltaRow) === Math.abs(deltaCol))) {
+                if (isPathClear(fromRow, fromCol, toRow, toCol)) {
+                    return true;
+                }
+            }
+            break;
+        case 'K':
+            // Kings (used for detecting attacks, not actual king movement)
+            if (Math.abs(deltaRow) <= 1 && Math.abs(deltaCol) <= 1) {
+                return true;
+            }
+            break;
+    }
+
+    return false;
+}
