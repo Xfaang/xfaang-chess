@@ -104,6 +104,9 @@ canvas.addEventListener('click', event => {
         if (moveValidator.isCheckmate(turn)) {
             statusDiv.textContent = `${turn === 'w' ? "Black" : "White"} wins by checkmate! Xfaang Wins!`;
             gameOver = true;
+        } else if (moveValidator.isStalemate(turn)) {
+            statusDiv.textContent = "Stalemate! It's a draw. Still Xfaang Wins!";
+            gameOver = true;
         }
         drawBoard();
     } else {
@@ -489,6 +492,38 @@ function MoveValidator(board, canCastle, enPassantTarget) {
         }
 
         // No valid moves found, so it's checkmate
+        return true;
+    };
+
+    this.isStalemate = function(color) {
+        // Check if the king is in check
+        if (this.isKingInCheck(color)) {
+            return false; // In check, so cannot be stalemate
+        }
+
+        // Iterate over all pieces of the given color
+        for (let fromRow = 0; fromRow < 8; fromRow++) {
+            for (let fromCol = 0; fromCol < 8; fromCol++) {
+                const piece = this.board[fromRow][fromCol];
+                if (piece && piece[0] === color) {
+                    // Try moving this piece to all possible squares
+                    for (let toRow = 0; toRow < 8; toRow++) {
+                        for (let toCol = 0; toCol < 8; toCol++) {
+                            // Skip if moving to the same square
+                            if (fromRow === toRow && fromCol === toCol) continue;
+
+                            // Check if the move is valid
+                            if (this.isValidMove(fromRow, fromCol, toRow, toCol, color)) {
+                                // Found a valid move, so not stalemate
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // No valid moves found, so it's stalemate
         return true;
     };
 }
