@@ -105,7 +105,7 @@ canvas.addEventListener('click', event => {
             statusDiv.textContent = `${turn === 'w' ? "Black" : "White"} wins by checkmate! Xfaang Wins!`;
             gameOver = true;
         } else if (moveValidator.isStalemate(turn)) {
-            statusDiv.textContent = "Stalemate! It's a draw. Still Xfaang Wins!";
+            statusDiv.textContent = "Stalemate! It's a draw. Xfaang still Wins!";
             gameOver = true;
         }
         drawBoard();
@@ -190,6 +190,8 @@ function movePiece(fromRow, fromCol, toRow, toCol) {
         movingPiece,
         capturedPiece: board[toRow][toCol]
     });
+
+    updateMoveHistoryDisplay();
 }
 
 // MoveValidator Class
@@ -526,4 +528,69 @@ function MoveValidator(board, canCastle, enPassantTarget) {
         // No valid moves found, so it's stalemate
         return true;
     };
+}
+
+function getAlgebraicNotation(move) {
+    const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+    const pieceSymbols = { 'P': '', 'R': 'R', 'N': 'N', 'B': 'B', 'Q': 'Q', 'K': 'K' };
+
+    let notation = '';
+
+    const movingPiece = move.movingPiece;
+    const pieceType = movingPiece[1];
+    const pieceSymbol = pieceSymbols[pieceType];
+
+    // Castling notation
+    if (pieceType === 'K' && Math.abs(move.toCol - move.fromCol) === 2) {
+        notation = move.toCol === 6 ? 'O-O' : 'O-O-O';
+        return notation;
+    }
+
+    // Capture detection
+    const isCapture = move.capturedPiece !== '';
+
+    // Special cases for pawn moves
+    if (pieceType === 'P') {
+        if (isCapture) {
+            notation += files[move.fromCol];
+            notation += 'x';
+        }
+    } else {
+        notation += pieceSymbol;
+        // Disambiguation and other advanced notation are omitted for simplicity
+        if (isCapture) {
+            notation += 'x';
+        }
+    }
+
+    // Destination square
+    notation += files[move.toCol] + (8 - move.toRow);
+
+    // Check or checkmate notation (if available)
+    if (move.checkmate) {
+        notation += '#';
+    } else if (move.check) {
+        notation += '+';
+    }
+
+    return notation;
+}
+
+function updateMoveHistoryDisplay() {
+    const movesList = document.getElementById('movesList');
+    movesList.innerHTML = '';
+
+    // Group moves into pairs (white and black)
+    for (let i = 0; i < moveHistory.length; i += 2) {
+        const moveNumber = Math.floor(i / 2) + 1;
+        const whiteMove = moveHistory[i];
+        const blackMove = moveHistory[i + 1];
+
+        const whiteNotation = getAlgebraicNotation(whiteMove);
+        const blackNotation = blackMove ? getAlgebraicNotation(blackMove) : '';
+
+        const listItem = document.createElement('li');
+        listItem.textContent = `${moveNumber}. ${whiteNotation} ${blackNotation}`;
+        movesList.appendChild(listItem);
+    }
 }

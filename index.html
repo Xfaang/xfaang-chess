@@ -6,7 +6,7 @@
     <style>
         body {
             text-align: center;
-            font-family: Arial, sans-serif;
+            font-family: neuzeit-grotesk, sans-serif;
         }
 
         h1 {
@@ -31,6 +31,27 @@
             text-decoration: none;
         }
 
+        #status {
+            margin-top: 10px;
+            font-size: 18px;
+        }
+        #moveHistory {
+            margin-top: 20px;
+            text-align: left;
+            display: inline-block;
+            max-height: 400px;
+            overflow-y: auto;
+            width: 200px;
+            border: 1px solid #333;
+            padding: 10px;
+        }
+        #moveHistory h2 {
+            text-align: center;
+        }
+        #moveHistory ol {
+            padding-left: 20px;
+        }
+
     </style>
 </head>
 <body>
@@ -53,6 +74,10 @@
     </a><br/>Chess</h1>
     <canvas id="chessboard" width="640" height="640"></canvas>
     <div id="status">Zientara's turn</div>
+    <div id="moveHistory">
+        <h2>Move History</h2>
+        <ol id="movesList"></ol>
+    </div>
     <script src="chess.js"></script>
 </body>
 </html>
