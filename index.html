@@ -8,9 +8,18 @@
             text-align: center;
             font-family: Arial, sans-serif;
         }
+
+        h1 {
+            font-size: 24px;
+        }
+
         #chessboard {
             margin: 20px auto;
-            border: 2px solid #333;
+            border: 4px solid #333;
+            border-bottom-color: #4286F4;
+            border-right-color: #e50511;
+            border-left-color: #8CB600;
+            border-top-color: #FF9900;
             display: block;
         }
         #status {
@@ -25,7 +34,23 @@
     </style>
 </head>
 <body>
-    <h1><a href="https://xfaang.com">Xfaang </a>Chess</h1>
+    <h1><a href="https://xfaang.com">
+        <svg height="100" width="100" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+             viewBox="0 0 78 118.7" xml:space="preserve">
+        <style type="text/css">
+            .st0{fill:#FF9900;}
+            .st1{fill:#e50511;}
+            .st2{fill:#8CB600;}
+            .st3{fill:#4286F4;}
+        </style>
+        <g id="bed91b97-f761-4872-b2fd-3d44a8c08d54">
+            <path class="st0" d="M44.2,28l8.3,12.1L77.2,3.5L75,2c-4.7-3.2-11-2.3-14.6,2.1l0,0L44.2,28z"/>
+            <path class="st1" d="M52.4,52.2L44.5,65l15.1,23.1c3.4,5,10.2,6.3,15.2,3l2.2-1.5L52.4,52.2z"/>
+            <path class="st2" d="M28.7,46.5h15.5c0-0.8-0.2-1.5-0.7-2.2l-26-39.2c-3.4-5-10.2-6.4-15.2-3L0,3.6L28.7,46.5z"/>
+            <path class="st3" d="M28.7,46.5h15.5c0,0.8-0.2,1.5-0.7,2.2l-26,39.2c-3.4,5-10.2,6.3-15.2,3L0,89.3L28.7,46.5z"/>
+        </g>
+        </svg>
+    </a><br/>Chess</h1>
     <canvas id="chessboard" width="640" height="640"></canvas>
     <div id="status">Zientara's turn</div>
     <script src="chess.js"></script>
