@@ -95,14 +95,14 @@ canvas.addEventListener('click', event => {
         if (moveValidator.isValidMove(selectedPiece.row, selectedPiece.col, row, col, turn)) {
             movePiece(selectedPiece.row, selectedPiece.col, row, col);
             turn = turn === 'w' ? 'b' : 'w';
-            statusDiv.textContent = `${turn === 'w' ? "White's" : "Black's"} turn`;
+            statusDiv.textContent = `${turn === 'w' ? "Zientara's" : "Czubaka's"} turn`;
             // Update the validator's state
             moveValidator.updateState(board, canCastle, enPassantTarget);
         } 
         selectedPiece = null;
 
         if (moveValidator.isCheckmate(turn)) {
-            statusDiv.textContent = `${turn === 'w' ? "Black" : "White"} wins by checkmate!`;
+            statusDiv.textContent = `${turn === 'w' ? "Black" : "White"} wins by checkmate! Xfaang Wins!`;
             gameOver = true;
         }
         drawBoard();
