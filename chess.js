@@ -699,7 +699,7 @@ blackClockElement.addEventListener('click', () => {
 
 
 function sendMoveHistoryToAPI(moveHistory) {
-    const apiUrl = 'https://ev08xu57s0.execute-api.eu-central-1.amazonaws.com/chat'; // Replace with your actual API endpoint
+    const apiUrl = 'https://g1sqppheyd.execute-api.eu-central-1.amazonaws.com/prod/chat'; // Replace with your actual API endpoint
 
     const data = {
         stream: false,
