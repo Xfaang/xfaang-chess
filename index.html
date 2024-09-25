@@ -2,12 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Xfaang Chess</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <!-- Updated Title for SEO -->
+    <title>Xfaang Chess - Play Chess with Live AI Commentary</title>
+
+    <!-- Meta Description for SEO -->
+    <meta name="description" content="Play chess online with Xfaang Chess, a simple HTML, CSS, and JavaScript app featuring live AI commentary on your moves.">
+
+    <!-- Open Graph Meta Tags for Social Media Sharing -->
+    <meta property="og:title" content="Xfaang Chess - Play Chess with Live AI Commentary">
+    <meta property="og:description" content="Play chess online with Xfaang Chess, a simple web app featuring live AI commentary on your moves.">
+    <meta property="og:image" content="https://xfaang-assets.s3.eu-west-3.amazonaws.com/hackathon/xfaang-chess/chess-xfaang-com.png">
+    <meta property="og:url" content="https://chess.xfaang.com">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Xfaang Chess - Play Chess with Live AI Commentary">
+    <meta name="twitter:description" content="Play chess online with Xfaang Chess, a simple web app featuring live AI commentary on your moves.">
+    <meta name="twitter:image" content="https://xfaang-assets.s3.eu-west-3.amazonaws.com/hackathon/xfaang-chess/chess-xfaang-com.png">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://chess.xfaang.com">
+
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1><a href="https://xfaang.com">
+    <h1><a href="https://xfaang.com" title="Xfaang Home">
         <svg height="100" width="100" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
              viewBox="0 0 78 118.7" xml:space="preserve">
         <style type="text/css">
@@ -41,6 +62,29 @@
         <h2>History</h2>
         <ol id="movesList"></ol>
     </div>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Game",
+      "name": "Xfaang Chess",
+      "url": "https://chess.xfaang.com",
+      "description": "Play chess online with live AI commentary.",
+      "image": "https://xfaang-assets.s3.eu-west-3.amazonaws.com/hackathon/xfaang-chess/chess-xfaang-com.png",
+      "author": {
+        "@type": "Organization",
+        "name": "Xfaang"
+      },
+      "applicationCategory": "GameApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
     <script src="chessClock.js"></script> 
     <script src="chess.js"></script>
 </body>
