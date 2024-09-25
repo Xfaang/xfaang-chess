@@ -26,6 +26,17 @@ let canCastle = {
 };
 let enPassantTarget = null;
 
+const initialTime = 300; // 5 minutes in seconds
+const chessClock = new ChessClock(initialTime, onTimeOut);
+
+// Function to handle time-out
+function onTimeOut(color) {
+    statusDiv.textContent = `${color === 'w' ? 'Zientara' : 'Czubak'} ran out of time. ${color === 'w' ? 'Zientara' : 'Czubak'} wins!`;
+    gameOver = true;
+    moveValidator.gameOver = true; // If you have such a property
+    chessClock.pause();
+}
+
 // Load images
 const pieceImages = {};
 const pieceTypes = ['P','R','N','B','Q','K'];
@@ -107,6 +118,7 @@ function resizeCanvas() {
 
 // Call resizeCanvas initially
 resizeCanvas();
+chessClock.start();
 
 canvas.addEventListener('pointerdown', handleInput);
 
@@ -134,9 +146,11 @@ function handleInput(event) {
 
         if (moveValidator.isCheckmate(turn)) {
             statusDiv.textContent = `${turn === 'w' ? "Black" : "White"} wins by checkmate! Xfaang Wins!`;
+            chessClock.pause();
             gameOver = true;
         } else if (moveValidator.isStalemate(turn)) {
             statusDiv.textContent = "Stalemate! It's a draw. Xfaang still Wins!";
+            chessClock.pause();
             gameOver = true;
         }
         drawBoard();
@@ -161,6 +175,14 @@ window.addEventListener('resize', resizeCanvas);
 function movePiece(fromRow, fromCol, toRow, toCol) {
     const movingPiece = board[fromRow][fromCol];
     const pieceType = movingPiece[1];
+
+    // Update the clock
+    chessClock.switchTurn();
+
+    // If the game is over, pause the clock
+    if (gameOver) {
+        chessClock.pause();
+    }
 
     // Handle castling
     if (pieceType === 'K' && Math.abs(toCol - fromCol) === 2) {

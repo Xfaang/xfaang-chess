@@ -80,3 +80,24 @@ a {
         max-height: 640px;
     }
 }
+
+#clocks {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+}
+
+.clock {
+    width: 100px;
+    padding: 10px;
+    margin: 0 10px;
+    text-align: center;
+    font-size: 24px;
+    background-color: #eee;
+    border: 2px solid #333;
+    border-radius: 5px;
+}
+
+.clock.active {
+    background-color: #cfc;
+}
