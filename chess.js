@@ -707,7 +707,7 @@ function updateMoveHistoryDisplay() {
     });
 
     movesNumber++;
-    if (movesNumber % commentAfter == 0) {
+    if (movesNumber % commentAfter == 0 || movesNumber == 4) {
         sendMoveHistoryToAPI(movesList.innerHTML);
     }
 }
