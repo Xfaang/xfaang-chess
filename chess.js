@@ -705,6 +705,7 @@ function updateMoveHistoryDisplay() {
         listItem.textContent = move;
         movesListElement.appendChild(listItem);
     });
+    
     movesNumber++;
     if ((movesNumber - offsset) % 6 == 0 || movesNumber == offsset) {
         sendMoveHistoryToAPI(movesList.innerHTML);
