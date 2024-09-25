@@ -90,27 +90,25 @@ const statusDiv = document.getElementById('status');
 
 // Function to resize the canvas and recalculate tile size
 function resizeCanvas() {
-    const minDimension = Math.min(window.innerWidth, window.innerHeight);
-    const boardDisplaySize = minDimension * 0.9; // Use 90% of the smaller dimension
-    const maxBoardSize = 640; // Maximum size
+    const viewportWidth = document.documentElement.clientWidth;
+    const viewportHeight = document.documentElement.clientHeight;
+
+    const minDimension = Math.min(viewportWidth, viewportHeight);
+    const boardDisplaySize = minDimension * 0.9;
+    const maxBoardSize = 640;
     const displaySize = Math.min(boardDisplaySize, maxBoardSize);
 
-    // Get the device pixel ratio, default to 1 if it's not set
-    const ratio = window.devicePixelRatio || 1;
-
-    // Set the canvas CSS size (the size it appears on the page)
     canvas.style.width = displaySize + 'px';
     canvas.style.height = displaySize + 'px';
 
-    // Set the canvas internal size (actual pixels for rendering)
+    const ratio = window.devicePixelRatio || 1;
+
     canvas.width = displaySize * ratio;
     canvas.height = displaySize * ratio;
 
-    // Calculate tileSize based on the internal canvas size
-    tileSize = canvas.width / 8;
+    tileSize = displaySize / 8;
 
-    // Scale the drawing context to account for the device pixel ratio
-    ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset any existing transforms
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.scale(ratio, ratio);
 
     drawBoard();

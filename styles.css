@@ -30,9 +30,6 @@ a {
     border-left-color: #8CB600;
     border-top-color: #FF9900;
     box-sizing: border-box;
-    width: 100%; /* Responsive width */
-    max-width: 640px; /* Maximum width */
-    height: auto; /* Let the height adjust automatically */
     touch-action: none; /* Disable default touch actions */
 }
 
@@ -64,23 +61,6 @@ a {
     margin: 0;
 }
 
-/* Media query for larger screens */
-@media (min-width: 768px) {
-    #gameContainer {
-        flex-direction: row; /* Place elements side by side on larger screens */
-        justify-content: center;
-    }
-    #chessboard {
-        touch-action: none;
-        width: 640px;
-        height: 640px;
-    }
-    #moveHistory {
-        margin-left: 20px;
-        max-height: 640px;
-    }
-}
-
 #clocks {
     display: flex;
     justify-content: center;
@@ -101,3 +81,19 @@ a {
 .clock.active {
     background-color: #cfc;
 }
+
+/* Media query for larger screens */
+@media (min-width: 768px) {
+    #gameContainer {
+        flex-direction: row; /* Place elements side by side on larger screens */
+        justify-content: center;
+    }
+    #chessboard {
+        touch-action: none;
+    }
+    #moveHistory {
+        margin-left: 20px;
+        max-height: 640px;
+    }
+}
+
