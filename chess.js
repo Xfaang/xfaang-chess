@@ -2,6 +2,7 @@
 const canvas = document.getElementById('chessboard');
 const startButton = document.getElementById('startButton');
 const statusDiv = document.getElementById('status');
+const commentDiv = document.getElementById('comment');
 let gameStarted = false;
 let gameOver = false;
 
@@ -11,6 +12,7 @@ let selectedPiece = null;
 let turn = 'w';
 
 let movesNumber = 0;
+const commentAfter = 6;
 
 startButton.addEventListener('click', () => {
     if (!gameStarted) {
@@ -676,7 +678,7 @@ function updateMoveHistoryDisplay() {
         movesList.appendChild(listItem);
     }
     movesNumber++;
-    if (movesNumber % 4 == 0) {
+    if (movesNumber % commentAfter == 0) {
         sendMoveHistoryToAPI(movesList.innerHTML);
     }
 }
@@ -707,7 +709,7 @@ function sendMoveHistoryToAPI(moveHistory) {
         messages: [
             {
                 role: 'user',
-                content: `roast this sequence of chess moves ${moveHistory}`
+                content: `roast this sequence of chess moves ${moveHistory} in two sentences`
             }
         ]
     };
@@ -716,14 +718,14 @@ function sendMoveHistoryToAPI(moveHistory) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
-            // Include any additional headers if required
         },
         body: JSON.stringify(data)
     })
     .then(response => response.json())
     .then(result => {
         console.log('API Response:', result);
-        // Handle the API response here
+        const comment = result.message.content;
+        commentDiv.textContent = comment
     })
     .catch(error => {
         console.error('Error sending move history to API:', error);

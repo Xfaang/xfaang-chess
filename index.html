@@ -27,20 +27,20 @@
     
     <div id="gameContainer">
         <canvas id="chessboard"></canvas>
-        <section>
-            <div id="status">Press "Start Game" to begin.</div>
-            <button id="startButton">Start Game</button>
-            <div id="clocks">
-                <div id="whiteClock" class="clock">05:00</div>
-                <div id="blackClock" class="clock">05:00</div>
-            </div>
-            <div id="moveHistory">
-                <h2>Move History</h2>
-                <ol id="movesList"></ol>
-            </div>
-        <section>
     </div>
-
+    <section>
+        <div id="status">Press "Start Game" to begin.</div>
+        <div id="comment"></div>
+        <button id="startButton">Start Game</button>
+        <div id="clocks">
+            <div id="whiteClock" class="clock">05:00</div>
+            <div id="blackClock" class="clock">05:00</div>
+        </div>
+        <div id="moveHistory">
+            <h2>Move History</h2>
+            <ol id="movesList"></ol>
+        </div>
+    <section>
     <script src="chessClock.js"></script> 
     <script src="chess.js"></script>
 </body>

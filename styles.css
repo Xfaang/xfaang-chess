@@ -36,7 +36,12 @@ a {
 /* Status Message */
 #status {
     margin-top: 10px;
+    margin-bottom: 10px;
     font-size: 18px;
+}
+
+#comment {
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
 }
 
 #startButton {
