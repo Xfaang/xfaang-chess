@@ -114,9 +114,6 @@ function handleInput(event) {
     const rect = canvas.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
-
-console.log("tileSize", tileSize)
-
     const col = Math.floor(x / tileSize);
     const row = Math.floor(y / tileSize);
 
