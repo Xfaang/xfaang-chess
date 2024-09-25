@@ -31,7 +31,7 @@ const chessClock = new ChessClock(initialTime, onTimeOut);
 
 // Function to handle time-out
 function onTimeOut(color) {
-    statusDiv.textContent = `${color === 'w' ? 'Zientara' : 'Czubak'} ran out of time. ${color === 'w' ? 'Zientara' : 'Czubak'} wins!`;
+    statusDiv.textContent = `${color === 'w' ? 'Zientara' : 'Czubak'} ran out of time.`;
     gameOver = true;
     moveValidator.gameOver = true; // If you have such a property
     chessClock.pause();
@@ -477,14 +477,16 @@ function MoveValidator(board, canCastle, enPassantTarget) {
 
         if (this.isKingInCheck(turn)) return false; // Can't castle if in check
 
+        const opponentColor = turn === 'w' ? 'b' : 'w'; // Identify opponent
+
         if (kingSide) {
             // King-side castling
             const rook = this.board[fromRow][7];
             if (rook === `${turn}R` && this.canCastle[`${turn}R7`]) {
                 // Check if squares between king and rook are empty
                 if (this.board[fromRow][5] === '' && this.board[fromRow][6] === '') {
-                    // Ensure squares are not under attack
-                    if (!this.areSquaresUnderAttack(fromRow, [5,6], turn)) {
+                    // Ensure squares are not under attack by opponent
+                    if (!this.areSquaresUnderAttack(fromRow, [5,6], opponentColor)) {
                         return true;
                     }
                 }
@@ -494,7 +496,8 @@ function MoveValidator(board, canCastle, enPassantTarget) {
             const rook = this.board[fromRow][0];
             if (rook === `${turn}R` && this.canCastle[`${turn}R0`]) {
                 if (this.board[fromRow][1] === '' && this.board[fromRow][2] === '' && this.board[fromRow][3] === '') {
-                    if (!this.areSquaresUnderAttack(fromRow, [2,3], turn)) {
+                    // Ensure squares are not under attack by opponent
+                    if (!this.areSquaresUnderAttack(fromRow, [3,2], opponentColor)) {
                         return true;
                     }
                 }
@@ -504,20 +507,29 @@ function MoveValidator(board, canCastle, enPassantTarget) {
         return false;
     };
 
-    this.areSquaresUnderAttack = function(row, cols, color) {
-        for (let col of cols) {
-            // Simulate king on the square
-            const originalPiece = this.board[row][col];
-            this.board[row][col] = `${color}K`;
-
-            const inCheck = this.isKingInCheck(color);
-
-            // Revert the piece
-            this.board[row][col] = originalPiece;
-
-            if (inCheck) return true;
+    this.isSquareUnderAttack = function(row, col, attackerColor) {
+        // Iterate over all squares on the board
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                const piece = this.board[r][c];
+                if (piece && piece[0] === attackerColor) {
+                    // If the piece belongs to the attacker, check if it can move to the target square
+                    if (this.canPieceAttackSquare(r, c, row, col, attackerColor)) {
+                        return true; // The square is under attack
+                    }
+                }
+            }
         }
-        return false;
+        return false; // No attacking piece found
+    };
+
+    this.areSquaresUnderAttack = function(row, cols, attackerColor) {
+        for (let col of cols) {
+            if (this.isSquareUnderAttack(row, col, attackerColor)) {
+                return true; // Square is under attack
+            }
+        }
+        return false; // None of the squares are under attack
     };
 
     this.isCheckmate = function(color) {
