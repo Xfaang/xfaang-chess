@@ -10,6 +10,8 @@ let boardSize; // The size of the canvas in pixels
 let selectedPiece = null;
 let turn = 'w';
 
+let movesNumber = 0;
+
 startButton.addEventListener('click', () => {
     if (!gameStarted) {
         gameStarted = true;
@@ -673,6 +675,10 @@ function updateMoveHistoryDisplay() {
         listItem.textContent = `${moveNumber}. ${whiteNotation} ${blackNotation}`;
         movesList.appendChild(listItem);
     }
+    movesNumber++;
+    if (movesNumber % 4 == 0) {
+        sendMoveHistoryToAPI(movesList.innerHTML);
+    }
 }
 
 const whiteClockElement = document.getElementById('whiteClock');
@@ -690,3 +696,36 @@ blackClockElement.addEventListener('click', () => {
         chessClock.editTime('b');
     }
 });
+
+
+function sendMoveHistoryToAPI(moveHistory) {
+    const apiUrl = 'http://xfaang.lambox.org:5060/api/chat'; // Replace with your actual API endpoint
+
+    const data = {
+        stream: false,
+        model: "llama3.1:70b", 
+        messages: [
+            {
+                role: 'user',
+                content: `roast this sequence of chess moves ${moveHistory}`
+            }
+        ]
+    };
+
+   fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+            // Include any additional headers if required
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        console.log('API Response:', result);
+        // Handle the API response here
+    })
+    .catch(error => {
+        console.error('Error sending move history to API:', error);
+    });
+}
