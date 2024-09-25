@@ -41,7 +41,9 @@ a {
 }
 
 #comment {
+    margin: 0 auto;
     font-family: neuzeit-grotesk, sans-serif;
+    max-width: 800px;
 }
 
 #startButton {
