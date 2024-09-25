@@ -54,6 +54,7 @@ a {
 
 /* Move History */
 #moveHistory {
+    margin: 0 auto;
     margin-top: 20px;
     text-align: left;
     max-height: 200px;
@@ -106,7 +107,6 @@ a {
         touch-action: none;
     }
     #moveHistory {
-        margin-left: 20px;
         max-height: 640px;
     }
 }
