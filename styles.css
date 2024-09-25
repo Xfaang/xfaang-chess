@@ -39,6 +39,14 @@ a {
     font-size: 18px;
 }
 
+#startButton {
+    padding: 10px 20px;
+    font-size: 18px;
+    margin: 20px auto;
+    display: block;
+    cursor: pointer;
+}
+
 /* Move History */
 #moveHistory {
     margin-top: 20px;
@@ -76,6 +84,7 @@ a {
     background-color: #eee;
     border: 2px solid #333;
     border-radius: 5px;
+    cursor: pointer;
 }
 
 .clock.active {

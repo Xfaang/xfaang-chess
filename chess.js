@@ -1,7 +1,25 @@
 // Get canvas context
 const canvas = document.getElementById('chessboard');
-const ctx = canvas.getContext('2d');
+const startButton = document.getElementById('startButton');
+const statusDiv = document.getElementById('status');
+let gameStarted = false;
 let gameOver = false;
+
+let tileSize; // We'll calculate this dynamically
+let boardSize; // The size of the canvas in pixels
+let selectedPiece = null;
+let turn = 'w';
+
+startButton.addEventListener('click', () => {
+    if (!gameStarted) {
+        gameStarted = true;
+        statusDiv.textContent = `${turn === 'w' ? "White's" : "Black's"} turn`;
+        startButton.style.display = 'none'; // Hide the start button
+        chessClock.start(); // Start the chess clock
+    }
+});
+
+const ctx = canvas.getContext('2d');
 // Initialize board matrix
 let board = [
     ['bR','bN','bB','bQ','bK','bB','bN','bR'],
@@ -13,6 +31,7 @@ let board = [
     ['wP','wP','wP','wP','wP','wP','wP','wP'],
     ['wR','wN','wB','wQ','wK','wB','wN','wR']
 ];
+
 
 // Variables to keep track of moves for castling and en passant
 let moveHistory = [];
@@ -28,6 +47,10 @@ let enPassantTarget = null;
 
 const initialTime = 300; // 5 minutes in seconds
 const chessClock = new ChessClock(initialTime, onTimeOut);
+
+// Instantiate the MoveValidator
+const moveValidator = new MoveValidator(board, canCastle, enPassantTarget);
+
 
 // Function to handle time-out
 function onTimeOut(color) {
@@ -79,15 +102,6 @@ function drawBoard() {
     }
 }
 
-// Instantiate the MoveValidator
-const moveValidator = new MoveValidator(board, canCastle, enPassantTarget);
-
-let tileSize; // We'll calculate this dynamically
-let boardSize; // The size of the canvas in pixels
-let selectedPiece = null;
-let turn = 'w';
-const statusDiv = document.getElementById('status');
-
 // Function to resize the canvas and recalculate tile size
 function resizeCanvas() {
     const viewportWidth = document.documentElement.clientWidth;
@@ -116,7 +130,6 @@ function resizeCanvas() {
 
 // Call resizeCanvas initially
 resizeCanvas();
-chessClock.start();
 
 canvas.addEventListener('pointerdown', handleInput);
 
@@ -129,7 +142,7 @@ function handleInput(event) {
 
     const clickedPiece = board[row][col];
 
-    if (gameOver) return;
+    if (!gameStarted || gameOver) return;
 
     if (selectedPiece) {
         // Move logic
@@ -661,3 +674,19 @@ function updateMoveHistoryDisplay() {
         movesList.appendChild(listItem);
     }
 }
+
+const whiteClockElement = document.getElementById('whiteClock');
+const blackClockElement = document.getElementById('blackClock');
+
+whiteClockElement.addEventListener('click', () => {
+    if (!gameStarted) {
+        // Allow editing time only before the game starts
+        chessClock.editTime('w');
+    }
+});
+
+blackClockElement.addEventListener('click', () => {
+    if (!gameStarted) {
+        chessClock.editTime('b');
+    }
+});
