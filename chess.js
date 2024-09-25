@@ -266,6 +266,80 @@ function movePiece(fromRow, fromCol, toRow, toCol) {
     updateMoveHistoryDisplay();
 }
 
+function generateMovesList(moveHistory) {
+    const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+    const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
+    const movesList = [];
+    
+    for (let i = 0; i < moveHistory.length; i++) {
+        const move = moveHistory[i];
+        const fromFile = files[move.fromCol];
+        const fromRank = ranks[move.fromRow];
+        const toFile = files[move.toCol];
+        const toRank = ranks[move.toRow];
+        const movingPiece = move.movingPiece; // e.g., 'wP', 'bN', etc.
+        const capturedPiece = move.capturedPiece; // e.g., 'wP', 'bP', or '' if none
+
+        // Determine the piece type and color
+        const pieceType = movingPiece[1]; // 'P', 'N', 'B', 'R', 'Q', 'K'
+        const movingColor = movingPiece[0]; // 'w' or 'b'
+        let moveNotation = '';
+
+        // Handle castling
+        if (pieceType === 'K' && Math.abs(move.toCol - move.fromCol) === 2) {
+            if (move.toCol === 6) {
+                moveNotation = 'O-O'; // King-side castling
+            } else if (move.toCol === 2) {
+                moveNotation = 'O-O-O'; // Queen-side castling
+            }
+        } else {
+            // Determine piece symbol (empty for pawns unless capturing)
+            let pieceSymbol = pieceType !== 'P' ? pieceType : '';
+            let captureSymbol = '';
+            let disambiguation = ''; // For move disambiguation if needed
+
+            // Determine if a capture has occurred
+            let isCapture = false;
+            if (capturedPiece !== '' && capturedPiece[0] !== movingColor) {
+                isCapture = true;
+            }
+
+            // Check for captures
+            if (isCapture) {
+                captureSymbol = 'x';
+                if (pieceType === 'P') {
+                    // For pawn captures, include the file of departure
+                    pieceSymbol = fromFile;
+                }
+            }
+
+            // Check for pawn promotion
+            let promotion = '';
+            if (pieceType === 'P' && (move.toRow === 0 || move.toRow === 7)) {
+                // Assume promotion to Queen; adjust as needed
+                promotion = '=Q';
+            }
+
+            // Assemble move notation
+            moveNotation = pieceSymbol + captureSymbol + toFile + toRank + promotion;
+        }
+
+        // Append move notation to moves list
+        movesList.push(moveNotation);
+    }
+
+    // Format the moves into move numbers
+    const formattedMovesList = [];
+    for (let i = 0; i < movesList.length; i += 2) {
+        const moveNumber = Math.floor(i / 2) + 1;
+        const whiteMove = movesList[i];
+        const blackMove = movesList[i + 1] || '';
+        formattedMovesList.push(`${moveNumber}. ${whiteMove} ${blackMove}`.trim());
+    }
+
+    return formattedMovesList;
+}
+
 // MoveValidator Class
 function MoveValidator(board, canCastle, enPassantTarget) {
     this.board = board;
@@ -661,22 +735,23 @@ function getAlgebraicNotation(move) {
 }
 
 function updateMoveHistoryDisplay() {
-    const movesList = document.getElementById('movesList');
-    movesList.innerHTML = '';
+    const movesListElement = document.getElementById('movesList');
+    console.log('moveHistory', moveHistory);
 
-    // Group moves into pairs (white and black)
-    for (let i = 0; i < moveHistory.length; i += 2) {
-        const moveNumber = Math.floor(i / 2) + 1;
-        const whiteMove = moveHistory[i];
-        const blackMove = moveHistory[i + 1];
+    // Generate the formatted moves list
+    let formattedMovesList = generateMovesList(moveHistory);
+    console.log("formattedMovesList", formattedMovesList);
 
-        const whiteNotation = getAlgebraicNotation(whiteMove);
-        const blackNotation = blackMove ? getAlgebraicNotation(blackMove) : '';
+    // Clear the existing moves
+    movesListElement.innerHTML = '';
 
+    // Loop over formattedMovesList and add each move to the display
+    formattedMovesList.forEach(move => {
         const listItem = document.createElement('li');
-        listItem.textContent = `${moveNumber}. ${whiteNotation} ${blackNotation}`;
-        movesList.appendChild(listItem);
-    }
+        listItem.textContent = move;
+        movesListElement.appendChild(listItem);
+    });
+
     movesNumber++;
     if (movesNumber % commentAfter == 0) {
         sendMoveHistoryToAPI(movesList.innerHTML);
