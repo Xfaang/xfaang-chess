@@ -1,10 +1,6 @@
 // Get canvas context
 const canvas = document.getElementById('chessboard');
 const ctx = canvas.getContext('2d');
-const tileSize = 80;
-let selectedPiece = null;
-let turn = 'w';
-const statusDiv = document.getElementById('status');
 let gameOver = false;
 // Initialize board matrix
 let board = [
@@ -55,19 +51,16 @@ colors.forEach(color => {
 
 // Draw the board
 function drawBoard() {
-    for(let row = 0; row < 8; row++) {
-        for(let col = 0; col < 8; col++) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+    for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
             // Draw tiles
-            if ((row + col) % 2 === 0) {
-                ctx.fillStyle = '#f0d9b5';
-            } else {
-                ctx.fillStyle = '#b58863';
-            }
+            ctx.fillStyle = (row + col) % 2 === 0 ? '#f0d9b5' : '#b58863';
             ctx.fillRect(col * tileSize, row * tileSize, tileSize, tileSize);
 
             // Draw pieces
             const piece = board[row][col];
-            if(piece) {
+            if (piece) {
                 const img = pieceImages[piece];
                 ctx.drawImage(img, col * tileSize, row * tileSize, tileSize, tileSize);
             }
@@ -78,9 +71,31 @@ function drawBoard() {
 // Instantiate the MoveValidator
 const moveValidator = new MoveValidator(board, canCastle, enPassantTarget);
 
-// Handle click events
-canvas.addEventListener('click', event => {
-    if (gameOver) return;
+let tileSize; // We'll calculate this dynamically
+let boardSize; // The size of the canvas in pixels
+let selectedPiece = null;
+let turn = 'w';
+const statusDiv = document.getElementById('status');
+
+// Function to resize the canvas and recalculate tile size
+function resizeCanvas() {
+    // Calculate the available width and height
+    const minDimension = Math.min(window.innerWidth, window.innerHeight);
+    boardSize = minDimension * 0.9; // Use 90% of the smaller dimension
+    if (boardSize > 640) boardSize = 640; // Limit to a maximum of 640px
+    canvas.width = boardSize;
+    canvas.height = boardSize;
+
+    tileSize = boardSize / 8;
+    drawBoard();
+}
+
+// Call resizeCanvas initially
+resizeCanvas();
+
+canvas.addEventListener('pointerdown', handleInput);
+
+function handleInput(event) {
     const rect = canvas.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
@@ -89,6 +104,8 @@ canvas.addEventListener('click', event => {
     const row = Math.floor(y / tileSize);
 
     const clickedPiece = board[row][col];
+
+    if (gameOver) return;
 
     if (selectedPiece) {
         // Move logic
@@ -120,7 +137,11 @@ canvas.addEventListener('click', event => {
             ctx.strokeRect(col * tileSize, row * tileSize, tileSize, tileSize);
         }
     }
-});
+}
+
+// Add event listener to handle window resize
+window.addEventListener('resize', resizeCanvas);
+
 
 // Move the piece
 function movePiece(fromRow, fromCol, toRow, toCol) {

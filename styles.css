@@ -71,6 +71,7 @@ a {
         justify-content: center;
     }
     #chessboard {
+        touch-action: none;
         width: 640px;
         height: 640px;
     }
