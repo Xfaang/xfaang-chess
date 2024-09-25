@@ -12,7 +12,9 @@ let selectedPiece = null;
 let turn = 'w';
 
 let movesNumber = 0;
-const commentAfter = 6;
+const commentAfter = 6; // comment will be given after this number of moves
+const offsset = 4 // the first comment after this number of moves
+
 
 startButton.addEventListener('click', () => {
     if (!gameStarted) {
@@ -690,11 +692,9 @@ function MoveValidator(board, canCastle, enPassantTarget) {
 
 function updateMoveHistoryDisplay() {
     const movesListElement = document.getElementById('movesList');
-    console.log('moveHistory', moveHistory);
 
     // Generate the formatted moves list
     let formattedMovesList = generateMovesList(moveHistory);
-    console.log("formattedMovesList", formattedMovesList);
 
     // Clear the existing moves
     movesListElement.innerHTML = '';
@@ -705,9 +705,8 @@ function updateMoveHistoryDisplay() {
         listItem.textContent = move;
         movesListElement.appendChild(listItem);
     });
-
     movesNumber++;
-    if (movesNumber % commentAfter == 0 || movesNumber == 4) {
+    if ((movesNumber - offsset) % 6 == 0 || movesNumber == offsset) {
         sendMoveHistoryToAPI(movesList.innerHTML);
     }
 }
@@ -738,7 +737,7 @@ function sendMoveHistoryToAPI(moveHistory) {
         messages: [
             {
                 role: 'user',
-                content: `you're a chess grandmaster, give a comment to this game: ${moveHistory} in max 3 sentences.`
+                content: `You're a chess grandmaster, give a comment to this game: ${moveHistory} in max 3 sentences.`
             }
         ]
     };
@@ -752,9 +751,8 @@ function sendMoveHistoryToAPI(moveHistory) {
     })
     .then(response => response.json())
     .then(result => {
-        console.log('API Response:', result);
         const comment = result.message.content;
-        commentDiv.textContent = comment
+        commentDiv.textContent = comment;
     })
     .catch(error => {
         console.error('Error sending move history to API:', error);
