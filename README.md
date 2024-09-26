@@ -132,7 +132,8 @@ This project is licensed under the [Xfaang Software License Agreement](https://g
 ## Acknowledgments
 
 - **Lambox**: For AI language models that could power the live commentary.
-- **Community Contributors**: Thanks to [![kwikiel](https://github.com/kwikiel.png)](https://github.com/kwikiel) and [![heapwolf](https://github.com/heapwolf.png)](https://github.com/heapwolf) for contributing ideas, feedback, and helping with debugging the code!
+- **Community Contributors**: Thanks to ![kwikiel](https://github.com/kwikiel)
+and ![heapwolf](https://github.com/heapwolf) contributed ideas, feedback and helped with debugging the code!
 
 ---
 
