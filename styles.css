@@ -52,6 +52,11 @@ a {
     margin: 20px auto;
     display: block;
     cursor: pointer;
+    background-color: #8cb601;
+    border-color: #8cb601;
+    color: white;
+    text-transform: uppercase;
+    transition: background-color 0.3s;
 }
 
 /* Move History */

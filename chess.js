@@ -846,7 +846,7 @@ function hideCookieConsent() {
 function initCookieConsent() {
     const consent = getCookie('cookieConsent');
     if (consent === 'accepted') {
-        loadGoogleAnalytics();
+        return;
     } else if (consent !== 'declined') {
         // Show the consent popup
         const cookieConsent = document.getElementById('cookieConsent');
