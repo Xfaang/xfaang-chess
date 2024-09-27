@@ -815,3 +815,65 @@ function sendMoveHistoryToAPI(moveHistory) {
         console.error('Error sending move history to API:', error);
     });
 }
+
+// Function to check if the user has already consented
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+// Function to set a cookie
+function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days*24*60*60*1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+}
+
+// Function to hide the cookie consent popup
+function hideCookieConsent() {
+    const cookieConsent = document.getElementById('cookieConsent');
+    if (cookieConsent) {
+        cookieConsent.style.display = 'none';
+    }
+}
+
+// Function to initialize cookie consent
+function initCookieConsent() {
+    const consent = getCookie('cookieConsent');
+    if (consent === 'accepted') {
+        loadGoogleAnalytics();
+    } else if (consent !== 'declined') {
+        // Show the consent popup
+        const cookieConsent = document.getElementById('cookieConsent');
+        if (cookieConsent) {
+            cookieConsent.style.display = 'flex';
+        }
+    }
+}
+
+// Event listeners for buttons
+document.addEventListener('DOMContentLoaded', function() {
+    initCookieConsent();
+
+    const acceptButton = document.getElementById('acceptCookies');
+    const declineButton = document.getElementById('declineCookies');
+
+    if (acceptButton) {
+        acceptButton.addEventListener('click', function() {
+            setCookie('cookieConsent', 'accepted', 365);
+            hideCookieConsent();
+        });
+    }
+
+    if (declineButton) {
+        declineButton.addEventListener('click', function() {
+            setCookie('cookieConsent', 'declined', 365);
+            hideCookieConsent();
+        });
+    }
+});
