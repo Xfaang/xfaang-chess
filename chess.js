@@ -17,6 +17,7 @@ const offsset = 4 // the first comment after this number of moves
 
 // Variables to track promotion
 let promotionSquare = null;
+let promotionFromSquare = null;
 let promotionColor = null;
 
 startButton.addEventListener('click', () => {
@@ -191,8 +192,9 @@ function handleInput(event) {
 window.addEventListener('resize', resizeCanvas);
 
 // Function to prompt pawn promotion
-function promptPawnPromotion(toRow, toCol, movingPiece) {
+function promptPawnPromotion(toRow, toCol, movingPiece, fromRow, fromCol) {
     promotionSquare = { row: toRow, col: toCol };
+    promotionFromSquare = { fromRow: fromRow, fromCol: fromCol };
     promotionColor = movingPiece[0];
     
     const modal = document.getElementById('promotionModal');
@@ -210,6 +212,7 @@ document.querySelectorAll('.promo-button').forEach(button => {
 // Function to promote pawn
 function promotePawn(pieceType) {
     const { row, col } = promotionSquare;
+    const { fromRow, fromCol } = promotionFromSquare;
     
     // Determine the piece's color prefix
     const colorPrefix = promotionColor === 'w' ? 'w' : 'b';
@@ -217,6 +220,8 @@ function promotePawn(pieceType) {
     // Set the new piece on the board
     board[row][col] = colorPrefix + pieceType;
     
+    board[fromRow][fromCol] = ''; // Remove the pawn from the board
+
     // Update move history with promotion
     const lastMove = moveHistory[moveHistory.length - 1];
     lastMove.promotedTo = board[row][col]; // e.g., 'wQ'
@@ -246,7 +251,7 @@ function movePiece(fromRow, fromCol, toRow, toCol) {
     // Check for pawn promotion
     if (movingPiece[1] === 'P') { // If the piece is a pawn
         if ((movingPiece[0] === 'w' && toRow === 0) || (movingPiece[0] === 'b' && toRow === 7)) {
-            promptPawnPromotion(toRow, toCol, movingPiece);
+            promptPawnPromotion(toRow, toCol, movingPiece, fromRow, fromCol);
             return; // Wait for promotion to complete
         }
     }
