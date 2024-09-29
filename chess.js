@@ -29,6 +29,8 @@ startButton.addEventListener('click', () => {
     }
 });
 
+let kings = 'xfaang';
+
 const ctx = canvas.getContext('2d');
 // Initialize board matrix
 let board = [
@@ -84,14 +86,38 @@ function imageLoaded() {
     }
 }
 
-colors.forEach(color => {
-    pieceTypes.forEach(type => {
-        const img = new Image();
-        img.src = `images/${color}${type}.png`;
-        img.onload = imageLoaded;
-        pieceImages[`${color}${type}`] = img;
+function setImages() {
+    colors.forEach(color => {
+        pieceTypes.forEach(type => {
+            const img = new Image();
+            let src = `images/${color}${type}.png`;
+            if (kings == 'xfaang') {
+                if (type == 'K' ) {
+                    if (color == 'w') {
+                        src = "images/zientara.png";
+                    } else {
+                        src = "images/czubak.png";
+                    };
+                };
+            } else if (kings == '') {
+                if (type == 'K' ) {
+                    if (color == 'b') {
+                        src = "images/zientara.png";
+                    } else {
+                        src = "images/czubak.png";
+                    };
+                };
+            } else {
+                src = `images/${color}${type}.png`;
+            }
+            console.log('src', src);
+            img.src = src;
+            img.onload = imageLoaded;
+            pieceImages[`${color}${type}`] = img;
+        });
     });
-});
+}
+setImages();
 
 // Draw the board
 function drawBoard() {
@@ -152,7 +178,18 @@ function handleInput(event) {
 
     const clickedPiece = board[row][col];
 
-    if (!gameStarted || gameOver) return;
+    if (!gameStarted || gameOver) {
+        if(kings == 'xfaang') {
+            kings = '';
+        } else if (kings == '') {
+            kings = 'regular';
+        } else {
+           kings = ''; 
+        };
+        setImages();
+        drawBoard();
+        return;
+    }
 
     if (selectedPiece) {
         // Move logic
