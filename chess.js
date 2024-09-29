@@ -5,7 +5,6 @@ const statusDiv = document.getElementById('status');
 const commentDiv = document.getElementById('comment');
 let gameStarted = false;
 let gameOver = false;
-
 let tileSize; // We'll calculate this dynamically
 let boardSize; // The size of the canvas in pixels
 let selectedPiece = null;
@@ -107,10 +106,7 @@ function setImages() {
                         src = "images/czubak.png";
                     };
                 };
-            } else {
-                src = `images/${color}${type}.png`;
             }
-            console.log('src', src);
             img.src = src;
             img.onload = imageLoaded;
             pieceImages[`${color}${type}`] = img;
@@ -184,7 +180,7 @@ function handleInput(event) {
         } else if (kings == '') {
             kings = 'regular';
         } else {
-           kings = ''; 
+           kings = 'xfaang'; 
         };
         setImages();
         drawBoard();

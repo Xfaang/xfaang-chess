@@ -47,6 +47,7 @@ a {
 }
 
 #startButton {
+    font-weight: bold;
     padding: 10px 20px;
     font-size: 18px;
     margin: 20px auto;
