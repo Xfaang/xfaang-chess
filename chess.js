@@ -65,7 +65,7 @@ const moveValidator = new MoveValidator(board, canCastle, enPassantTarget);
 
 // Function to handle time-out
 function onTimeOut(color) {
-    statusDiv.textContent = `${color === 'w' ? 'Zientara' : 'Czubak'} ran out of time.`;
+    statusDiv.textContent = `${color === 'w' ? 'Rebels army' : 'Imperial army'} ran out of time.`;
     gameOver = true;
     moveValidator.gameOver = true; // If you have such a property
     chessClock.pause();
@@ -90,23 +90,6 @@ function setImages() {
         pieceTypes.forEach(type => {
             const img = new Image();
             let src = `images/${color}${type}.png`;
-            if (kings == 'xfaang') {
-                if (type == 'K' ) {
-                    if (color == 'w') {
-                        src = "images/zientara.png";
-                    } else {
-                        src = "images/czubak.png";
-                    };
-                };
-            } else if (kings == '') {
-                if (type == 'K' ) {
-                    if (color == 'b') {
-                        src = "images/zientara.png";
-                    } else {
-                        src = "images/czubak.png";
-                    };
-                };
-            }
             img.src = src;
             img.onload = imageLoaded;
             pieceImages[`${color}${type}`] = img;
@@ -121,7 +104,7 @@ function drawBoard() {
     for (let row = 0; row < 8; row++) {
         for (let col = 0; col < 8; col++) {
             // Draw tiles
-            ctx.fillStyle = (row + col) % 2 === 0 ? '#f0d9b5' : '#b58863';
+            ctx.fillStyle = (row + col) % 2 === 0 ? '#66B2FF' : '#003366';
             ctx.fillRect(col * tileSize, row * tileSize, tileSize, tileSize);
 
             // Draw pieces
@@ -175,13 +158,6 @@ function handleInput(event) {
     const clickedPiece = board[row][col];
 
     if (!gameStarted || gameOver) {
-        if(kings == 'xfaang') {
-            kings = '';
-        } else if (kings == '') {
-            kings = 'regular';
-        } else {
-           kings = 'xfaang'; 
-        };
         setImages();
         drawBoard();
         return;
@@ -192,18 +168,18 @@ function handleInput(event) {
         if (moveValidator.isValidMove(selectedPiece.row, selectedPiece.col, row, col, turn)) {
             movePiece(selectedPiece.row, selectedPiece.col, row, col);
             turn = turn === 'w' ? 'b' : 'w';
-            statusDiv.textContent = `${turn === 'w' ? "Zientara's" : "Czubaka's"} turn`;
+            statusDiv.textContent = `${turn === 'w' ? "Rebel's" : "The Empire's"} turn`;
             // Update the validator's state
             moveValidator.updateState(board, canCastle, enPassantTarget);
         } 
         selectedPiece = null;
 
         if (moveValidator.isCheckmate(turn)) {
-            statusDiv.textContent = `${turn === 'w' ? "Black" : "White"} wins by checkmate! Xfaang Wins!`;
+            statusDiv.textContent = `${turn === 'w' ? "Black" : "White"} wins by checkmate! May the force be with you!`;
             chessClock.pause();
             gameOver = true;
         } else if (moveValidator.isStalemate(turn)) {
-            statusDiv.textContent = "Stalemate! It's a draw. Xfaang still Wins!";
+            statusDiv.textContent = "Stalemate! It's a draw!";
             chessClock.pause();
             gameOver = true;
         }
@@ -827,7 +803,7 @@ function sendMoveHistoryToAPI(moveHistory) {
         messages: [
             {
                 role: 'user',
-                content: `You're a chess grandmaster, give a comment to this game: ${moveHistory} in max 3 sentences.`
+                content: `You're a chess grandmaster, give a comment to this game: ${moveHistory} in max 3 sentences. Use a start wars style for it!`
             }
         ]
     };
@@ -870,8 +846,12 @@ function setCookie(name, value, days) {
 // Function to hide the cookie consent popup
 function hideCookieConsent() {
     const cookieConsent = document.getElementById('cookieConsent');
+    const starwars = document.getElementById('star-wars');
     if (cookieConsent) {
         cookieConsent.style.display = 'none';
+    }
+    if (starwars) {
+        starwars.style.display = 'none';
     }
 }
 
