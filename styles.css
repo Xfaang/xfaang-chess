@@ -265,6 +265,7 @@ a {
   line-height: 150%;
   perspective: 400px;
   text-align: justify;
+  max-width: 100%; /* Full width */
 }
 
 .crawl {
